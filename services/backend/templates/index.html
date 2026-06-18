@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSEEK - Distributed Search Engine</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 5rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 9999px;
+            border: 1px solid var(--muted);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            border-color: var(--accent);
+        }
+        button {
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            border: none;
+            background: var(--accent);
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        #results {
+            text-align: left;
+            width: 100%;
+        }
+        .result-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .result-card:hover {
+            border-color: var(--accent);
+        }
+        .result-card a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .result-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSEEK</h1>
+        <div class="search-box">
+            <input type="text" id="query" placeholder="Search the web..." onkeypress="if(event.key==='Enter') search()">
+            <button onclick="search()">Search</button>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function search() {
+            const query = document.getElementById('query').value;
+            if (!query) return;
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p style="text-align:center">Searching...</p>';
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    resultsDiv.innerHTML = '<p style="text-align:center">No results found.</p>';
+                    return;
+                }
+
+                resultsDiv.innerHTML = data.map(res => `
+                    <div class="result-card">
+                        <a href="${res.url}" target="_blank">${res.title}</a>
+                        <p style="color: #4ade80; margin: 0.2rem 0;">${res.url}</p>
+                        <p>${res.snippet}</p>
+                    </div>
+                `).join('');
+            } catch (e) {
+                resultsDiv.innerHTML = '<p style="text-align:center; color: #ef4444;">Error fetching results.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

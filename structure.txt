@@ -1,0 +1,17 @@
+services/
+  crawler/
+    Dockerfile
+    main.py
+    crawler.py
+    extractor.py
+    db.py
+    queue.py
+    requirements.txt
+  processor/
+    Dockerfile
+    main.py
+    requirements.txt
+infra/
+  init.sql
+docker-compose.yml
+.env

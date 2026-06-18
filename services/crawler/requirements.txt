@@ -1,0 +1,7 @@
+aiohttp
+beautifulsoup4
+redis
+psycopg2-binary
+sqlalchemy
+python-dotenv
+lxml
